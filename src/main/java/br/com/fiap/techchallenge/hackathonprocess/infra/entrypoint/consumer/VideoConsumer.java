@@ -19,7 +19,7 @@ public class VideoConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @SqsListener("${sqs.queue.order.evolve.listener}")
+    @SqsListener("${sqs.queue.process.video.listener}")
     public void receiveMessage(String message) throws JsonProcessingException {
         processUseCase.process(objectMapper.readValue(message, VideoToProcessDTO.class));
     }
