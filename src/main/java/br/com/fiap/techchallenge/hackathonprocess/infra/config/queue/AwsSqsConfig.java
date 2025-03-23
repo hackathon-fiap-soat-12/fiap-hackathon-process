@@ -12,13 +12,13 @@ import java.net.URI;
 @Configuration
 public class AwsSqsConfig {
 
-    @Value("${sqs.queue.url:default}")
-    private String urlSqs;
+    @Value("${aws.url:default}")
+    private String awsUrl;
 
     @Bean
     public SqsAsyncClient sqsAsyncClient() {
         return SqsAsyncClient.builder()
-                .endpointOverride(URI.create(urlSqs))
+                .endpointOverride(URI.create(awsUrl))
                 .region(Region.US_EAST_1)
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();

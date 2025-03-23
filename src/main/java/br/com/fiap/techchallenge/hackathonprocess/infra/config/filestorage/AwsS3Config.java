@@ -2,32 +2,38 @@ package br.com.fiap.techchallenge.hackathonprocess.infra.config.filestorage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.s3.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
-import java.io.InputStream;
 import java.net.URI;
 
 @Configuration
 public class AwsS3Config {
 
-    private static final String LOCALSTACK_URL = "http://localhost:4566";
+    @Value("${aws.url:default}")
+    private String awsUrl;
+
+    @Value("${aws.access-key-id:default}")
+    private String accessKeyId;
+
+    @Value("${aws.secret-access-key:default}")
+    private String secretAccessKey;
 
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
                 .region(Region.US_EAST_1)
-                .endpointOverride(URI.create(LOCALSTACK_URL)) // LocalStack URL
-                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build()) // Necessário para LocalStack
+                .endpointOverride(URI.create(awsUrl))
+                .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create("fakeAccessKey", "fakeSecretKey")
+                                AwsBasicCredentials.create(accessKeyId, secretAccessKey)
                         )
                 )
                 .build();
@@ -42,10 +48,10 @@ public class AwsS3Config {
     public S3Presigner s3Presigner() {
         return S3Presigner.builder()
                 .region(Region.US_EAST_1)
-                .endpointOverride(URI.create(LOCALSTACK_URL)) // LocalStack URL
+                .endpointOverride(URI.create(awsUrl))
                 .credentialsProvider(
                         StaticCredentialsProvider.create(
-                                AwsBasicCredentials.create("fakeAccessKey", "fakeSecretKey")
+                                AwsBasicCredentials.create(accessKeyId, secretAccessKey)
                         )
                 )
                 .build();
