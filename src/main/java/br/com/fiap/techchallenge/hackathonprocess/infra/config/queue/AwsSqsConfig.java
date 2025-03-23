@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import java.net.URI;
 
 @Configuration
-public class SqsConfig {
+public class AwsSqsConfig {
 
     @Value("${sqs.queue.url:default}")
     private String urlSqs;
@@ -18,9 +18,9 @@ public class SqsConfig {
     @Bean
     public SqsAsyncClient sqsAsyncClient() {
         return SqsAsyncClient.builder()
-                 .endpointOverride(URI.create(urlSqs))
+                .endpointOverride(URI.create(urlSqs))
                 .region(Region.US_EAST_1)
-                 .credentialsProvider(DefaultCredentialsProvider.create())
+                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 }
