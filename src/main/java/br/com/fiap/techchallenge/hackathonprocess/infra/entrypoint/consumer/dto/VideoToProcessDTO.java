@@ -1,4 +1,8 @@
 package br.com.fiap.techchallenge.hackathonprocess.infra.entrypoint.consumer.dto;
 
-public record VideoToProcessDTO() {
+import java.util.UUID;
+
+public record VideoToProcessDTO(UUID id,
+                                String bucketName,
+                                String key) {
 }

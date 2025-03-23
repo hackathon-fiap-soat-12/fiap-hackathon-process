@@ -1,6 +1,7 @@
 package br.com.fiap.techchallenge.hackathonprocess.infra.entrypoint.consumer;
 
 import br.com.fiap.techchallenge.hackathonprocess.application.usecase.ProcessUseCase;
+import br.com.fiap.techchallenge.hackathonprocess.domain.enums.ProcessStatus;
 import br.com.fiap.techchallenge.hackathonprocess.infra.entrypoint.consumer.dto.VideoToProcessDTO;
 import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.VideoUpdateProducer;
 import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.dto.VideoUpdateDTO;
@@ -26,7 +27,9 @@ public class VideoConsumer {
     @SqsListener("${sqs.queue.process.video.listener}")
     public void receiveMessage(String message) throws JsonProcessingException {
         var videoToProcess = objectMapper.readValue(message, VideoToProcessDTO.class);
-        videoUpdateProducer.sendToVideo(new VideoUpdateDTO());
+
+        videoUpdateProducer.sendToVideo(new VideoUpdateDTO(videoToProcess.id(), ProcessStatus.PROCESSING));
+
         processUseCase.process(videoToProcess);
     }
 }
