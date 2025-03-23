@@ -2,6 +2,8 @@ package br.com.fiap.techchallenge.hackathonprocess.infra.entrypoint.consumer;
 
 import br.com.fiap.techchallenge.hackathonprocess.application.usecase.ProcessUseCase;
 import br.com.fiap.techchallenge.hackathonprocess.infra.entrypoint.consumer.dto.VideoToProcessDTO;
+import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.VideoUpdateProducer;
+import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.dto.VideoUpdateDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
@@ -11,16 +13,20 @@ import org.springframework.stereotype.Component;
 public class VideoConsumer {
 
     private final ProcessUseCase processUseCase;
+    private final VideoUpdateProducer videoUpdateProducer;
     private final ObjectMapper objectMapper;
 
 
-    public VideoConsumer(ProcessUseCase processUseCase, ObjectMapper objectMapper) {
+    public VideoConsumer(ProcessUseCase processUseCase, VideoUpdateProducer videoUpdateProducer, ObjectMapper objectMapper) {
         this.processUseCase = processUseCase;
+        this.videoUpdateProducer = videoUpdateProducer;
         this.objectMapper = objectMapper;
     }
 
     @SqsListener("${sqs.queue.process.video.listener}")
     public void receiveMessage(String message) throws JsonProcessingException {
-        processUseCase.process(objectMapper.readValue(message, VideoToProcessDTO.class));
+        var videoToProcess = objectMapper.readValue(message, VideoToProcessDTO.class);
+        videoUpdateProducer.sendToVideo(new VideoUpdateDTO());
+        processUseCase.process(videoToProcess);
     }
 }
