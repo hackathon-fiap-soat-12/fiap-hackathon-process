@@ -28,7 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<sonar.exclusions>**/HackathonprocessApplication.java</sonar.exclusions>
+		<sonar.exclusions> **/ObjectMapperConfig.java, **/JacksonConfig.java, **/AwsSqsConfig.java, **/AwsS3Config.java, **/HackathonprocessApplication.java</sonar.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -72,18 +72,16 @@
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>javacv</artifactId>
-			<version>1.5.9</version> <!-- Verifique a versão mais recente -->
+			<version>1.5.9</version>
 		</dependency>
 
-
-
-		<!-- FFmpeg com bibliotecas nativas -->
+		<!-- FFmpeg com bibliotecas nativas-->
+		<!-- Alterar o classifier em windows-x86_64 para rodar local e para linux-x86_64 pra rodar em container -->
 		<dependency>
 			<groupId>org.bytedeco</groupId>
 			<artifactId>ffmpeg</artifactId>
 			<version>6.0-1.5.9</version>
 			<classifier>windows-x86_64</classifier>
-<!--			<classifier>linux-x86_64</classifier>-->
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
