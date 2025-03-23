@@ -57,12 +57,33 @@
 			<artifactId>spring-cloud-aws-starter-sqs</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.awspring.cloud</groupId>
+			<artifactId>spring-cloud-aws-s3</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jdk8</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<!-- JavaCV -->
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>javacv</artifactId>
+			<version>1.5.9</version> <!-- Verifique a versão mais recente -->
+		</dependency>
+
+
+
+		<!-- FFmpeg com bibliotecas nativas -->
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>ffmpeg</artifactId>
+			<version>6.0-1.5.9</version>
+			<classifier>windows-x86_64</classifier>
+<!--			<classifier>linux-x86_64</classifier>-->
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
