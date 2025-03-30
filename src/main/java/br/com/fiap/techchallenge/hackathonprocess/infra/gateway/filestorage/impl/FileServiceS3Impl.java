@@ -19,6 +19,7 @@ public class FileServiceS3Impl implements FileService {
         this.s3Template = s3Template;
     }
 
+    @Override
     public InputStream getFile(String bucketName, String key) {
         try {
             return s3Template.download(bucketName, key.replace(BUCKET_NAME_BREADCRUMB, EMPTY_FOLDER)).getInputStream();
@@ -27,6 +28,7 @@ public class FileServiceS3Impl implements FileService {
         }
     }
 
+    @Override
     public Boolean uploadFile(String bucketName, String key, InputStream file) {
         var uploaded = s3Template.upload(bucketName, key, file);
         return uploaded.exists();

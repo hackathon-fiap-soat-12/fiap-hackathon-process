@@ -25,6 +25,7 @@ public class VideoUpdateProducerImpl implements VideoUpdateProducer {
         this.objectMapper = objectMapper;
     }
 
+    @Override
     public void sendToVideo(VideoUpdateDTO dto) {
         try {
             sqsTemplate.send(videoUpdateQueue, objectMapper.writeValueAsString(dto));

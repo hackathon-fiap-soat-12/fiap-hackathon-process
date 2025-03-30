@@ -15,6 +15,7 @@ import java.util.List;
 @Component
 public class VideoFrameExtractor implements FrameExtractor {
 
+    @Override
     public List<InputStream> extractFrames(InputStream videoStream) {
         List<InputStream> frameStreams = new ArrayList<>();
         try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoStream)) {
