@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 
 import static br.com.fiap.techchallenge.hackathonprocess.application.service.ZipFiles.zipFilesToInputStream;
+import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Constants.*;
 
 
 public class ProcessUseCaseImpl implements ProcessUseCase {
@@ -36,12 +37,18 @@ public class ProcessUseCaseImpl implements ProcessUseCase {
 
             var frames = frameExtractor.extractFrames(videoStream);
 
-            processed = fileService.uploadFile(dto.bucketName(), "processed_" + dto.key() + ".zip", zipFilesToInputStream(frames));
+            processed = fileService.uploadFile(dto.bucketName(), generateKeyName(dto.key()), zipFilesToInputStream(frames));
             logger.info("Success on process {}", dto.id());
         } catch (ProcessException e){
             logger.error("Error on process {}", dto.id());
         } finally {
             videoUpdateProducer.sendToVideo(new VideoUpdateDTO(dto.id(), processed ? ProcessStatus.PROCESSED : ProcessStatus.FAILED));
         }
+    }
+
+    private String generateKeyName(String key) {
+        return key.replace(BUCKET_NAME_BREADCRUMB, EMPTY_FOLDER)
+                .replace(VIDEOS_FOLDER_NAME, FRAMES_FOLDER_NAME)
+                + ZIP_FILE_EXTENSION;
     }
 }

@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Constants.BUCKET_NAME_BREADCRUMB;
+import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Constants.EMPTY_FOLDER;
+
 @Service
 public class FileServiceS3Impl implements FileService {
 
@@ -18,7 +21,7 @@ public class FileServiceS3Impl implements FileService {
 
     public InputStream getFile(String bucketName, String key) {
         try {
-            return s3Template.download(bucketName, key).getInputStream();
+            return s3Template.download(bucketName, key.replace(BUCKET_NAME_BREADCRUMB, EMPTY_FOLDER)).getInputStream();
         } catch (IOException e) {
             throw new DoesNotExistException("File not found");
         }

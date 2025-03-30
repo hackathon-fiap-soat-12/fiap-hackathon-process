@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Constants.PREFIX_FILE;
+import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Constants.SUFFIX_FILE;
+
 public class ZipFiles {
 
     private ZipFiles(){}
@@ -16,7 +19,7 @@ public class ZipFiles {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
             int index = 0;
             for (InputStream frameStream : frames) {
-                zipOutputStream.putNextEntry(new ZipEntry("frame_" + index + ".jpg"));
+                zipOutputStream.putNextEntry(new ZipEntry(String.format("%s%d%s", PREFIX_FILE, index, SUFFIX_FILE)));
                 frameStream.transferTo(zipOutputStream);
                 zipOutputStream.closeEntry();
                 index++;
