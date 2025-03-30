@@ -28,6 +28,8 @@ public class VideoUpdateProducerImpl implements VideoUpdateProducer {
     public void sendToVideo(VideoUpdateDTO dto) {
         try {
             sqsTemplate.send(videoUpdateQueue, objectMapper.writeValueAsString(dto));
+
+            logger.info("Sent Update Status {} for id {}", dto.status(), dto.id());
         } catch (JsonProcessingException e) {
             logger.error("Error on send update status for id {}", dto.id());
         }

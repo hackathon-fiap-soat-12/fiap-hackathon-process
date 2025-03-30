@@ -8,10 +8,14 @@ import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.dto.Vid
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VideoConsumer {
+
+    private static final Logger logger = LoggerFactory.getLogger(VideoConsumer.class);
 
     private final ProcessUseCase processUseCase;
     private final VideoUpdateProducer videoUpdateProducer;
@@ -27,6 +31,8 @@ public class VideoConsumer {
     @SqsListener("${sqs.queue.process.video.listener}")
     public void receiveMessage(String message) throws JsonProcessingException {
         var videoToProcess = objectMapper.readValue(message, VideoToProcessDTO.class);
+
+        logger.info("Received video id {} to process", videoToProcess.id());
 
         videoUpdateProducer.sendToVideo(new VideoUpdateDTO(videoToProcess.id(), ProcessStatus.PROCESSING));
 
