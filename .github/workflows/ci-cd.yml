@@ -1,0 +1,157 @@
+name: Build and Docker Image Deploy to AWS
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  # Job para verificação de build e testes em pull requests e merge para a main
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '21' # Configuração para Java 21
+
+      - name: Build and run tests
+        run: |
+          mvn clean install  # Comando para build e testes com Maven
+
+  scan_sonnar:
+    runs-on: ubuntu-latest
+
+    env:
+      SONAR_PROJECT_KEY: fiap-hackathon-process
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '21' # Configuração para Java 21
+
+      - name: Rodar análise no SonarQube
+        run: mvn sonar:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+  # Job para criação e push da imagem Docker para ECR
+  build-and-push-ecr:
+    name: Build and Push Docker Image to ECR
+    runs-on: ubuntu-latest
+    needs: build-and-test # Garante que o push só ocorre se os testes passarem
+    if: github.ref == 'refs/heads/main'
+
+    env:
+      ECR_REPOSITORY: fiap-hackathon-process
+      AWS_REGION: us-east-1
+      IMAGE_TAG: latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      # Passo para verificar e criar o repositório no ECR, caso necessário
+      - name: Create ECR repository if it doesn't exist
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set default.region $AWS_REGION
+          aws ecr describe-repositories --repository-name $ECR_REPOSITORY || aws ecr create-repository --repository-name $ECR_REPOSITORY --region $AWS_REGION
+
+      # Passo para realizar o login no ECR
+      - name: Log in to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set aws_session_token $AWS_SESSION_TOKEN
+          aws configure set default.region $AWS_REGION
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com"
+
+      # Passo para construir a imagem Docker
+      - name: Build Docker image
+        run: |
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+
+      # Passo para marcar a imagem com a tag adequada para o ECR
+      - name: Tag Docker image for ECR
+        run: |
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      # Passo para fazer o push da imagem Docker para o repositório ECR
+      - name: Push Docker image to Amazon ECR
+        run: |
+          docker push "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG"
+
+  # Job para publicação da process
+  publish-process:
+    name: Terraform Verification and Push Process
+    runs-on: ubuntu-latest
+    needs: build-and-push-ecr
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      TF_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_VAR_AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.0
+
+      # Inicializar, validar e aplicar o Terraform para o diretório terraform
+
+      - name: Initialize Terraform for Process
+        working-directory: terraform
+        run: terraform init
+
+      - name: Validate Terraform for Process
+        working-directory: terraform
+        run: terraform validate
+
+      - name: Plan Terraform for Process
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
+        working-directory: terraform
+        run: terraform plan -out=tfplan-process
+
+      - name: Apply Terraform for Process
+        if: github.ref == 'refs/heads/main' # Executa apenas na branch main
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan-process
