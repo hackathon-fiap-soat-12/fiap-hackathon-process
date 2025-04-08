@@ -1,6 +1,7 @@
-package br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer;
+package br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.update;
 
-import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.dto.VideoUpdateDTO;
+import br.com.fiap.techchallenge.hackathonprocess.application.producer.VideoUpdateProducer;
+import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.update.dto.VideoUpdateDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
