@@ -48,17 +48,17 @@ class ZipFilesTest {
 
     @Test
     void shouldThrowErrorOnZipFileExceptionWhenIOExceptionOccurs() {
-        // Arrange: cria InputStream que lança IOException
-        InputStream brokenInputStream = new InputStream() {
+        try (InputStream brokenInputStream = new InputStream() {
             @Override
             public int read() throws IOException {
                 throw new IOException("Simulated error");
             }
-        };
-
-        // Act & Assert
-        assertThrows(Exception.class, () ->
-                ZipFiles.zipFilesToInputStream(List.of(brokenInputStream))
-        );
+        }) {
+            assertThrows(Exception.class, () ->
+                    ZipFiles.zipFilesToInputStream(List.of(brokenInputStream))
+            );
+        } catch (IOException e) {
+            fail("IOException should not occur while closing the broken input stream.");
+        }
     }
 }
