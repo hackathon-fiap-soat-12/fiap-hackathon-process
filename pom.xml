@@ -79,7 +79,7 @@
 			<groupId>org.bytedeco</groupId>
 			<artifactId>ffmpeg</artifactId>
 			<version>6.0-1.5.9</version>
-			<classifier>windows-x86_64</classifier>
+			<classifier>linux-x86_64</classifier>
 		</dependency>
 
 		<!-- Actuator and Micrometer -->
