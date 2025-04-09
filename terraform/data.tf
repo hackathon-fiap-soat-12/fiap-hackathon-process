@@ -15,10 +15,6 @@ data "aws_ecr_image" "latest_image" {
   image_tag       = "latest"
 }
 
-data "aws_sqs_queue" "payment_order_create_queue" {
-  name = "payment-order-create-queue"
-}
-
-data "aws_sqs_queue" "order-status-update-queue" {
-  name = "order-status-update-queue"
+data "aws_sqs_queue" "video_update_queue" {
+  name = "video-update-queue"
 }
