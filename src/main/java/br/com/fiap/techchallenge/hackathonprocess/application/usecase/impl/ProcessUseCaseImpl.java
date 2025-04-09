@@ -11,10 +11,6 @@ import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.update.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.io.IOException;
-import java.io.InputStream;
-
 import static br.com.fiap.techchallenge.hackathonprocess.application.service.ZipFiles.zipFilesToInputStream;
 import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Constants.*;
 
