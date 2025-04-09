@@ -69,12 +69,12 @@ resource "kubernetes_deployment" "process_deployment" {
 
           env {
             name  = "SQS_QUEUE_PROCESS_VIDEO_LISTENER"
-            value = "process-order-create-queue"
+            value = "process-video-queue"
           }
 
           env {
             name  = "SQS_QUEUE_PROCESS_VIDEO_PRODUCER"
-            value = data.aws_sqs_queue.order-status-update-queue.url
+            value = data.aws_sqs_queue.video_update_queue.url
           }
 
           env {
