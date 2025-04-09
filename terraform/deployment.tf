@@ -42,7 +42,7 @@ resource "kubernetes_deployment" "process_deployment" {
 
           liveness_probe {
             http_get {
-              path = "/process/actuator/health"
+              path = "/actuator/health"
               port = var.server_port
             }
             initial_delay_seconds = 60
@@ -53,7 +53,7 @@ resource "kubernetes_deployment" "process_deployment" {
 
           readiness_probe {
             http_get {
-              path = "/process/actuator/health"
+              path = "/actuator/health"
               port = var.server_port
             }
             initial_delay_seconds = 60
