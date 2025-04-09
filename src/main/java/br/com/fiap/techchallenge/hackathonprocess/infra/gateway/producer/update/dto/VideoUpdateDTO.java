@@ -1,4 +1,4 @@
-package br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.dto;
+package br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.update.dto;
 
 import br.com.fiap.techchallenge.hackathonprocess.domain.enums.ProcessStatus;
 

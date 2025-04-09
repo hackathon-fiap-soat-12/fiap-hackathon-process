@@ -28,7 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<sonar.exclusions> **/ObjectMapperConfig.java, **/JacksonConfig.java, **/AwsSqsConfig.java, **/AwsS3Config.java, **/HackathonprocessApplication.java</sonar.exclusions>
+		<sonar.exclusions> **/ObjectMapperConfig.java, **/JacksonConfig.java, **/AwsSqsConfig.java, **/AwsS3Config.java, **/HackathonprocessApplication.java, **/VideoFrameExtractor.java</sonar.exclusions>
 	</properties>
 	<dependencies>
 		<!-- Spring Boot -->
@@ -55,6 +55,10 @@
 			<groupId>io.awspring.cloud</groupId>
 			<artifactId>spring-cloud-aws-s3</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>apache-client</artifactId>
+		</dependency>
 
 		<!-- Jackson -->
 		<dependency>
@@ -79,7 +83,7 @@
 			<groupId>org.bytedeco</groupId>
 			<artifactId>ffmpeg</artifactId>
 			<version>6.0-1.5.9</version>
-			<classifier>windows-x86_64</classifier>
+			<classifier>linux-x86_64</classifier>
 		</dependency>
 
 		<!-- Actuator and Micrometer -->

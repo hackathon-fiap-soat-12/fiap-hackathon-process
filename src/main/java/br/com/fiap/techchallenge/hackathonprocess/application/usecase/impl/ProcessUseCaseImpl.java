@@ -6,8 +6,8 @@ import br.com.fiap.techchallenge.hackathonprocess.application.usecase.ProcessUse
 import br.com.fiap.techchallenge.hackathonprocess.domain.enums.ProcessStatus;
 import br.com.fiap.techchallenge.hackathonprocess.infra.entrypoint.consumer.dto.VideoToProcessDTO;
 import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.filestorage.FileService;
-import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.VideoUpdateProducer;
-import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.dto.VideoUpdateDTO;
+import br.com.fiap.techchallenge.hackathonprocess.application.producer.VideoUpdateProducer;
+import br.com.fiap.techchallenge.hackathonprocess.infra.gateway.producer.update.dto.VideoUpdateDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
