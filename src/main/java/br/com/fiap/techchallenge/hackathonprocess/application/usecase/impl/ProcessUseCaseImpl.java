@@ -32,17 +32,21 @@ public class ProcessUseCaseImpl implements ProcessUseCase {
     @Override
     public void process(VideoToProcessDTO dto){
         boolean processed = false;
+        int qtdFrames = 0;
+
         try {
             var videoStream = fileService.getFile(dto.bucketName(), dto.key());
 
             var frames = frameExtractor.extractFrames(videoStream);
 
             processed = fileService.uploadFile(dto.bucketName(), generateKeyName(dto.key()), zipFilesToInputStream(frames));
+
+            qtdFrames = frames.size();
             logger.info("Success on process {}", dto.id());
         } catch (ProcessException e){
             logger.error("Error on process {}", dto.id());
         } finally {
-            videoUpdateProducer.sendToVideo(new VideoUpdateDTO(dto.id(), processed ? ProcessStatus.PROCESSED : ProcessStatus.FAILED));
+            videoUpdateProducer.sendToVideo(new VideoUpdateDTO(dto.id(), processed ? ProcessStatus.PROCESSED : ProcessStatus.FAILED, qtdFrames));
         }
     }
 

@@ -62,7 +62,7 @@ class VideoUpdateProducerImplTest {
 
 
     private void buildArranges(){
-        videoUpdateDTO = new VideoUpdateDTO(UUID.randomUUID(), ProcessStatus.PROCESSING);
+        videoUpdateDTO = new VideoUpdateDTO(UUID.randomUUID(), ProcessStatus.PROCESSING, 20);
     }
 
 }
