@@ -45,6 +45,9 @@ jobs:
           distribution: 'temurin'
           java-version: '21' # Configuração para Java 21
 
+      - name: Compilar o projeto
+        run: mvn clean install
+
       - name: Rodar análise no SonarQube
         run: mvn sonar:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
