@@ -26,5 +26,5 @@ COPY --from=layers /layer/application/ ./
 RUN chown -R appuser:appuser /opt/app
 USER appuser
 
-EXPOSE 8080
+EXPOSE 8085
 ENTRYPOINT ["java", "-javaagent:/opt/app/opentelemetry-javaagent.jar", "-cp", ".", "org.springframework.boot.loader.launch.JarLauncher"]
