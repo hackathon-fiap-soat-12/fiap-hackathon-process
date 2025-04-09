@@ -34,7 +34,7 @@ public class VideoConsumer {
 
         logger.info("Received video id {} to process", videoToProcess.id());
 
-        videoUpdateProducer.sendToVideo(new VideoUpdateDTO(videoToProcess.id(), ProcessStatus.PROCESSING, 0));
+        videoUpdateProducer.sendToVideo(new VideoUpdateDTO(videoToProcess.id(), ProcessStatus.PROCESSING, 0, 0L));
 
         processUseCase.process(videoToProcess);
     }

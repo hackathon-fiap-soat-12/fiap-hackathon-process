@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import static br.com.fiap.techchallenge.hackathonprocess.application.service.ZipFiles.zipFilesToInputStream;
 import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Constants.*;
 
@@ -33,6 +36,7 @@ public class ProcessUseCaseImpl implements ProcessUseCase {
     public void process(VideoToProcessDTO dto){
         boolean processed = false;
         int qtdFrames = 0;
+        long sizeInBytes = 0;
 
         try {
             var videoStream = fileService.getFile(dto.bucketName(), dto.key());
@@ -41,12 +45,13 @@ public class ProcessUseCaseImpl implements ProcessUseCase {
 
             processed = fileService.uploadFile(dto.bucketName(), generateKeyName(dto.key()), zipFilesToInputStream(frames));
 
+            sizeInBytes = fileService.getSize(dto.bucketName(), generateKeyName(dto.key()));
             qtdFrames = frames.size();
             logger.info("Success on process {}", dto.id());
         } catch (ProcessException e){
             logger.error("Error on process {}", dto.id());
         } finally {
-            videoUpdateProducer.sendToVideo(new VideoUpdateDTO(dto.id(), processed ? ProcessStatus.PROCESSED : ProcessStatus.FAILED, qtdFrames));
+            videoUpdateProducer.sendToVideo(new VideoUpdateDTO(dto.id(), processed ? ProcessStatus.PROCESSED : ProcessStatus.FAILED, qtdFrames, sizeInBytes));
         }
     }
 

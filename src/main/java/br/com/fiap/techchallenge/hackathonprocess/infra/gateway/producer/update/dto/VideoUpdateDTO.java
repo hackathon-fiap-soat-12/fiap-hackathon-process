@@ -6,5 +6,9 @@ import java.util.UUID;
 
 public record VideoUpdateDTO(UUID id,
                              ProcessStatus status,
-                             Integer qtdFrames) {
+                             Integer qtdFrames,
+                             Long sizeInBytes) {
+    public VideoUpdateDTO(UUID id, ProcessStatus status) {
+        this(id, status, 0, 0L);
+    }
 }

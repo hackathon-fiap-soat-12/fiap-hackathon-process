@@ -60,7 +60,7 @@ class VideoConsumerTest {
 
     private void buildArranges(){
         videoToProcessDTO = new VideoToProcessDTO(UUID.randomUUID(), "my-bucket", "video.mp4");
-        videoUpdateDTO = new VideoUpdateDTO(videoToProcessDTO.id(), ProcessStatus.PROCESSING, 0);
+        videoUpdateDTO = new VideoUpdateDTO(videoToProcessDTO.id(), ProcessStatus.PROCESSING);
     }
 
 }
