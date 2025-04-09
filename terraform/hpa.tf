@@ -27,5 +27,5 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "process_hpa" {
     }
   }
 
-  depends_on = [kubernetes_service.process_service]
+  depends_on = [kubernetes_deployment.process_deployment]
 }
