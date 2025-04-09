@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,6 +25,9 @@ class FileServiceS3ImplTest {
     private S3Template s3Template;
 
     @Mock
+    private S3Client s3Client;
+
+    @Mock
     private S3Resource resource;
 
     @InjectMocks
@@ -34,7 +38,7 @@ class FileServiceS3ImplTest {
 
     @BeforeEach
     void setup() {
-        fileService = new FileServiceS3Impl(s3Template);
+        fileService = new FileServiceS3Impl(s3Template, s3Client);
     }
 
     @Test
