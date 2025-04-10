@@ -144,7 +144,7 @@ resource "kubernetes_deployment" "process_deployment" {
 
           env {
             name = "OTEL_JAVAAGENT_DEBUG"
-            value = "true"
+            value = "false"
           }
 
           env {
