@@ -10,6 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -95,4 +98,35 @@ class FileServiceS3ImplTest {
         assertFalse(result);
         verify(s3Template).upload(bucket, key, file);
     }
+
+    @Test
+    void testGetSize_Success() {
+        String bucket = "my-bucket";
+        String key = "test.txt";
+
+        HeadObjectResponse response = HeadObjectResponse.builder()
+                .contentLength(12345L)
+                .build();
+
+        when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(response);
+
+        Long result = fileService.getSize(bucket, key);
+
+        assertEquals(12345L, result);
+        verify(s3Client).headObject(argThat((HeadObjectRequest req) ->
+                req.bucket().equals(bucket) && req.key().equals(key)));
+
+    }
+
+    @Test
+    void testGetSize_ThrowsException() {
+        String bucket = "my-bucket";
+        String key = "nonexistent.txt";
+
+        when(s3Client.headObject(any(HeadObjectRequest.class)))
+                .thenThrow(S3Exception.builder().message("Not Found").build());
+
+        assertThrows(S3Exception.class, () -> fileService.getSize(bucket, key));
+    }
+
 }
