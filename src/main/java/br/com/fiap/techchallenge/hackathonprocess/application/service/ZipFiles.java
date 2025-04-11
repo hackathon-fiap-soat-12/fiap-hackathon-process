@@ -12,9 +12,9 @@ import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Consta
 
 public class ZipFiles {
 
-    private ZipFiles(){}
+    private ZipFiles() { }
 
-    public static InputStream zipFilesToInputStream(List<InputStream> frames){
+    public static InputStream zipFilesToInputStream(List<InputStream> frames) {
         var byteArrayOutputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
             int index = 0;

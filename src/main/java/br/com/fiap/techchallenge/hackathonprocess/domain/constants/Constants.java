@@ -9,5 +9,5 @@ public class Constants {
     public static final String PREFIX_FILE = "frame_";
     public static final String SUFFIX_FILE = ".jpg";
 
-    private Constants() {}
+    private Constants() { }
 }

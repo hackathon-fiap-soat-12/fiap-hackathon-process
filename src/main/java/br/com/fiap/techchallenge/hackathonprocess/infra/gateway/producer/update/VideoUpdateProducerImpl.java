@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class VideoUpdateProducerImpl implements VideoUpdateProducer {
 
-    private static final Logger logger = LoggerFactory.getLogger(VideoUpdateProducerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VideoUpdateProducerImpl.class);
 
     @Value("${sqs.queue.process.video.producer}")
     private String videoUpdateQueue;
@@ -31,9 +31,9 @@ public class VideoUpdateProducerImpl implements VideoUpdateProducer {
         try {
             sqsTemplate.send(videoUpdateQueue, objectMapper.writeValueAsString(dto));
 
-            logger.info("Sent Update Status {} for id {}", dto.status(), dto.id());
+            LOGGER.info("Sent Update Status {} for id {}", dto.status(), dto.id());
         } catch (JsonProcessingException e) {
-            logger.error("Error on send update status for id {}", dto.id());
+            LOGGER.error("Error on send update status for id {}", dto.id());
         }
     }
 }
