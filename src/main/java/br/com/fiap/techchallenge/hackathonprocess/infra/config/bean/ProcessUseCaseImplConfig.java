@@ -13,7 +13,7 @@ public class ProcessUseCaseImplConfig {
     @Bean
     public ProcessUseCaseImpl processUseCase(FileServiceS3Impl fileServiceS3,
                                              VideoFrameExtractor videoFrameExtractor,
-                                             VideoUpdateProducerImpl videoUpdateProducer){
+                                             VideoUpdateProducerImpl videoUpdateProducer) {
         return new ProcessUseCaseImpl(fileServiceS3, videoFrameExtractor, videoUpdateProducer);
     }
 }

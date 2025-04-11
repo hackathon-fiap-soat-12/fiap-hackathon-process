@@ -14,6 +14,7 @@ import java.util.List;
 
 @Component
 public class VideoFrameExtractor implements FrameExtractor {
+    private static final int SECONDS = 20;
 
     @Override
     public List<InputStream> extractFrames(InputStream videoStream) {
@@ -21,7 +22,7 @@ public class VideoFrameExtractor implements FrameExtractor {
         try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoStream)) {
             grabber.start();
             int frameRate = (int) grabber.getFrameRate();
-            int intervalFrames = frameRate * 20;
+            int intervalFrames = frameRate * SECONDS;
 
             try (Java2DFrameConverter converter = new Java2DFrameConverter()) {
                 this.extractAndConvert(grabber, intervalFrames, converter, frameStreams);

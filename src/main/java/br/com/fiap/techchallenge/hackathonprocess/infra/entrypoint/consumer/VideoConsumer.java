@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class VideoConsumer {
 
-    private static final Logger logger = LoggerFactory.getLogger(VideoConsumer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VideoConsumer.class);
 
     private final ProcessUseCase processUseCase;
     private final VideoUpdateProducer videoUpdateProducer;
@@ -32,7 +32,7 @@ public class VideoConsumer {
     public void receiveMessage(String message) throws JsonProcessingException {
         var videoToProcess = objectMapper.readValue(message, VideoToProcessDTO.class);
 
-        logger.info("Received video id {} to process", videoToProcess.id());
+        LOGGER.info("Received video id {} to process", videoToProcess.id());
 
         videoUpdateProducer.sendToVideo(new VideoUpdateDTO(videoToProcess.id(), ProcessStatus.PROCESSING, 0, 0L));
 

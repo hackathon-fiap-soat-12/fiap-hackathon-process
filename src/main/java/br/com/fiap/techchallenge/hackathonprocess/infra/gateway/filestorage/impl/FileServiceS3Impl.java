@@ -40,7 +40,7 @@ public class FileServiceS3Impl implements FileService {
     }
 
     @Override
-    public Long getSize(String bucketName, String key){
+    public Long getSize(String bucketName, String key) {
         var headRequest = HeadObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)

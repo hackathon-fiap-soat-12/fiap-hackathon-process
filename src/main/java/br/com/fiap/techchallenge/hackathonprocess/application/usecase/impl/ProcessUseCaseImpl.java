@@ -17,7 +17,7 @@ import static br.com.fiap.techchallenge.hackathonprocess.domain.constants.Consta
 
 public class ProcessUseCaseImpl implements ProcessUseCase {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProcessUseCaseImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessUseCaseImpl.class);
     private final FileService fileService;
     private final FrameExtractor frameExtractor;
     private final VideoUpdateProducer videoUpdateProducer;
@@ -29,7 +29,7 @@ public class ProcessUseCaseImpl implements ProcessUseCase {
     }
 
     @Override
-    public void process(VideoToProcessDTO dto){
+    public void process(VideoToProcessDTO dto) {
         boolean processed = false;
         int qtdFrames = 0;
         long sizeInBytes = 0;
@@ -43,9 +43,9 @@ public class ProcessUseCaseImpl implements ProcessUseCase {
 
             sizeInBytes = fileService.getSize(dto.bucketName(), generateKeyName(dto.key()));
             qtdFrames = frames.size();
-            logger.info("Success on process {}", dto.id());
-        } catch (ProcessException e){
-            logger.error("Error on process {}", dto.id());
+            LOGGER.info("Success on process {}", dto.id());
+        } catch (ProcessException e) {
+            LOGGER.error("Error on process {}", dto.id());
         } finally {
             videoUpdateProducer.sendToVideo(new VideoUpdateDTO(dto.id(), processed ? ProcessStatus.PROCESSED : ProcessStatus.FAILED, qtdFrames, sizeInBytes));
         }
