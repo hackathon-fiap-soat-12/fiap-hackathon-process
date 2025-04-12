@@ -42,6 +42,9 @@ public class ProcessUseCaseImpl implements ProcessUseCase {
             processed = fileService.uploadFile(dto.bucketName(), generateKeyName(dto.key()), zipFilesToInputStream(frames));
 
             sizeInBytes = fileService.getSize(dto.bucketName(), generateKeyName(dto.key()));
+
+            fileService.deleteFile(dto.bucketName(), dto.key());
+
             qtdFrames = frames.size();
             LOGGER.info("Success on process {}", dto.id());
         } catch (ProcessException e) {

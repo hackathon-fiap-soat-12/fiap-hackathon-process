@@ -9,4 +9,6 @@ public interface FileService {
     Boolean uploadFile(String bucketName, String key, InputStream file);
 
     Long getSize(String bucketName, String key);
+
+    void deleteFile(String bucketName, String key);
 }
