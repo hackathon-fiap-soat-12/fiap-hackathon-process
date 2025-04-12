@@ -1,5 +1,7 @@
 package br.com.fiap.techchallenge.hackathonprocess.infra.config.filestorage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,15 +15,20 @@ import software.amazon.awssdk.services.s3.*;
 @Profile("!local")
 public class AwsS3Config {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AwsS3Config.class);
 
-    @Value("${aws.access-key-id:default}")
+
+    @Value("${aws.access-key-id}")
     private String accessKeyId;
 
-    @Value("${aws.secret-access-key:default}")
+    @Value("${aws.secret-access-key}")
     private String secretAccessKey;
 
     @Bean
     public S3Client s3Client() {
+
+        LOGGER.info("Initializing S3Client accessKeyId {} - secretAccessKey {}", accessKeyId, secretAccessKey);
+
         return S3Client.builder()
                 .region(Region.US_EAST_1)
                 .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
