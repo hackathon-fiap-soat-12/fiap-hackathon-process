@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.hackathonprocess.application.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -12,17 +13,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class ZipFilesTest {
 
     @Test
+    @DisplayName("Should Zip Files Successfully")
     void shouldZipFilesSuccessfully() throws IOException {
-        // Arrange: cria 2 arquivos simulados
         String content1 = "frame data 1";
         String content2 = "frame data 2";
         InputStream inputStream1 = new ByteArrayInputStream(content1.getBytes());
         InputStream inputStream2 = new ByteArrayInputStream(content2.getBytes());
 
-        // Act
         InputStream result = ZipFiles.zipFilesToInputStream(List.of(inputStream1, inputStream2));
 
-        // Assert
         ZipInputStream zipInputStream = new ZipInputStream(result);
         ZipEntry entry;
 
@@ -47,6 +46,7 @@ class ZipFilesTest {
     }
 
     @Test
+    @DisplayName("Should Throw Error On Zip File Exception When IOException Occurs")
     void shouldThrowErrorOnZipFileExceptionWhenIOExceptionOccurs() {
         try (InputStream brokenInputStream = new InputStream() {
             @Override

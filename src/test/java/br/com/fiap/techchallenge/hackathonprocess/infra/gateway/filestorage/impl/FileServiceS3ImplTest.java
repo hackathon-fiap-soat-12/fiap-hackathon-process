@@ -4,6 +4,7 @@ import br.com.fiap.techchallenge.hackathonprocess.application.exceptions.DoesNot
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,81 +37,78 @@ class FileServiceS3ImplTest {
     @InjectMocks
     private FileServiceS3Impl fileService;
 
-    private final String bucket = "my-bucket";
-    private final String key = "videofiles/video.mp4";
+    private InputStream mockInputStream;
+
+    private String bucket;
+    private String key;
 
     @BeforeEach
-    void setup() {
-        fileService = new FileServiceS3Impl(s3Template, s3Client);
+    void setUp() {
+        this.buildArranges();
     }
 
     @Test
-    void testGetFile_Success() throws IOException {
-        InputStream mockInputStream = new ByteArrayInputStream("test content".getBytes());
-
-        when(s3Template.download(bucket, "video.mp4")).thenReturn(resource);
+    @DisplayName("Should Get File")
+    void shouldGetFile() throws IOException {
+        String key2 = "video.mp4";
+        when(s3Template.download(bucket, key2)).thenReturn(resource);
         when(resource.getInputStream()).thenReturn(mockInputStream);
 
-        InputStream result = fileService.getFile(bucket, key);
+        var result = fileService.getFile(bucket, key);
 
         assertNotNull(result);
         assertEquals(mockInputStream, result);
-        verify(s3Template).download(bucket, "video.mp4");
+        verify(s3Template).download(bucket, key2);
     }
 
     @Test
-    void testGetFile_ThrowsDoesNotExistException() throws IOException {
+    @DisplayName("Should Throw DoesNotExistException")
+    void shouldThrowDoesNotExistException() throws IOException {
         when(s3Template.download(bucket, "video.mp4")).thenReturn(resource);
         when(resource.getInputStream()).thenThrow(new IOException("Not found"));
 
-        DoesNotExistException exception = assertThrows(DoesNotExistException.class,
+        var exception = assertThrows(DoesNotExistException.class,
                 () -> fileService.getFile(bucket, key));
 
         assertEquals("File not found", exception.getMessage());
     }
 
     @Test
-    void testUploadFile_Success() {
-        InputStream file = new ByteArrayInputStream("dummy".getBytes());
+    @DisplayName("Should Upload File")
+    void shouldUploadFile() {
+        when(resource.exists()).thenReturn(true);
 
-        S3Resource mockUploadedResource = mock(S3Resource.class);
-        when(mockUploadedResource.exists()).thenReturn(true);
+        when(s3Template.upload(bucket, key, mockInputStream)).thenReturn(resource);
 
-        when(s3Template.upload(bucket, key, file)).thenReturn(mockUploadedResource);
-
-        Boolean result = fileService.uploadFile(bucket, key, file);
+        var result = fileService.uploadFile(bucket, key, mockInputStream);
 
         assertTrue(result);
-        verify(s3Template).upload(bucket, key, file);
+        verify(s3Template).upload(bucket, key, mockInputStream);
     }
 
     @Test
-    void testUploadFile_Failure() {
-        InputStream file = new ByteArrayInputStream("dummy".getBytes());
+    @DisplayName("Should Upload File Failure")
+    void shouldUploadFileFailure() {
+        when(resource.exists()).thenReturn(false);
 
-        S3Resource mockUploadedResource = mock(S3Resource.class);
-        when(mockUploadedResource.exists()).thenReturn(false);
+        when(s3Template.upload(bucket, key, mockInputStream)).thenReturn(resource);
 
-        when(s3Template.upload(bucket, key, file)).thenReturn(mockUploadedResource);
-
-        Boolean result = fileService.uploadFile(bucket, key, file);
+        var result = fileService.uploadFile(bucket, key, mockInputStream);
 
         assertFalse(result);
-        verify(s3Template).upload(bucket, key, file);
+        verify(s3Template).upload(bucket, key, mockInputStream);
     }
 
     @Test
-    void testGetSize_Success() {
-        String bucket = "my-bucket";
-        String key = "test.txt";
-
+    @DisplayName("Should Get Size")
+    void shouldGetSize() {
         HeadObjectResponse response = HeadObjectResponse.builder()
                 .contentLength(12345L)
                 .build();
 
         when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(response);
 
-        Long result = fileService.getSize(bucket, key);
+        var result = fileService.getSize(bucket, key);
 
         assertEquals(12345L, result);
         verify(s3Client).headObject(argThat((HeadObjectRequest req) ->
@@ -119,14 +117,17 @@ class FileServiceS3ImplTest {
     }
 
     @Test
-    void testGetSize_ThrowsException() {
-        String bucket = "my-bucket";
-        String key = "nonexistent.txt";
-
+    @DisplayName("Should Get Size Failure")
+    void shouldGetSizeFailure() {
         when(s3Client.headObject(any(HeadObjectRequest.class)))
                 .thenThrow(S3Exception.builder().message("Not Found").build());
 
         assertThrows(S3Exception.class, () -> fileService.getSize(bucket, key));
     }
 
+    private void buildArranges() {
+        mockInputStream = new ByteArrayInputStream("test content".getBytes());
+        bucket = "my-bucket";
+        key = "videofiles/video.mp4";
+    }
 }
