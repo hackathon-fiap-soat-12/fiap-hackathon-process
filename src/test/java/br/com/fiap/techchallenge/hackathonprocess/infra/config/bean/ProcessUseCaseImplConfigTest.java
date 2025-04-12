@@ -39,6 +39,4 @@ class ProcessUseCaseImplConfigTest {
         assertNotNull(videoUpdateProducer);
         assertInstanceOf(ProcessUseCaseImpl.class, processUseCaseImpl);
     }
-
-
 }
