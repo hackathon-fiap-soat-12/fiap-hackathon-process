@@ -1,5 +1,6 @@
 package br.com.fiap.techchallenge.hackathonprocess.infra.gateway.filestorage.impl;
 
+import br.com.fiap.techchallenge.hackathonprocess.application.exceptions.DoesNotExistException;
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -66,8 +68,8 @@ class FileServiceS3ImplTest {
         when(s3Template.download(bucket, "video.mp4")).thenReturn(resource);
         when(resource.getInputStream()).thenThrow(new IOException("Not found"));
 
-        assertThrows(Exception.class,
-                () -> fileService.getFile(bucket, key));
+        assertThrows(DoesNotExistException.class,
+                () -> fileService.getFile(bucket, "video.mp4"));
     }
 
     @Test
@@ -120,6 +122,28 @@ class FileServiceS3ImplTest {
                 .thenThrow(S3Exception.builder().message("Not Found").build());
 
         assertThrows(S3Exception.class, () -> fileService.getSize(bucket, key));
+    }
+
+    @Test
+    @DisplayName("Should Delete File Successfully")
+    void shouldDeleteFileSuccessfully() {
+        fileService.deleteFile(bucket, key);
+
+        verify(s3Client).deleteObject(argThat((DeleteObjectRequest req) ->
+                req.bucket().equals(bucket) && req.key().equals(key)));
+    }
+
+    @Test
+    @DisplayName("Should Throw Exception When Deleting File Fails")
+    void shouldThrowExceptionWhenDeletingFileFails() {
+        doThrow(S3Exception.builder().message("Access Denied").build())
+                .when(s3Client).deleteObject(any(DeleteObjectRequest.class));
+
+        S3Exception exception = assertThrows(S3Exception.class,
+                () -> fileService.deleteFile(bucket, key));
+
+        assertEquals("Access Denied", exception.getMessage());
+        verify(s3Client).deleteObject(any(DeleteObjectRequest.class));
     }
 
     private void buildArranges() {

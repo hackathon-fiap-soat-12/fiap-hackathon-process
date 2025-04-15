@@ -70,21 +70,18 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-		<!-- JavaCV -->
+		<!-- JCodec -->
 		<dependency>
-			<groupId>org.bytedeco</groupId>
-			<artifactId>javacv</artifactId>
-			<version>1.5.11</version>
+			<groupId>org.jcodec</groupId>
+			<artifactId>jcodec</artifactId>
+			<version>0.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcodec</groupId>
+			<artifactId>jcodec-javase</artifactId>
+			<version>0.2.5</version>
 		</dependency>
 
-		<!-- FFmpeg com bibliotecas nativas-->
-		<!-- Alterar o classifier em windows-x86_64 para rodar local e para linux-x86_64 pra rodar em container -->
-		<dependency>
-			<groupId>org.bytedeco</groupId>
-			<artifactId>ffmpeg</artifactId>
-			<version>7.1-1.5.11</version>
-			<classifier>linux-x86_64</classifier>
-		</dependency>
 
 		<!-- Actuator and Micrometer -->
 		<dependency>
