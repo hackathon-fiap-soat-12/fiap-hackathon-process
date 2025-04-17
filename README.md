@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hackathon - Process
+# FIAP Hackathon - Process
 
 ![GitHub Release Date](https://img.shields.io/badge/Release%20Date-Abril%202025-yellowgreen)
 ![](https://img.shields.io/badge/Status-Desenvolvido-brightgreen)
